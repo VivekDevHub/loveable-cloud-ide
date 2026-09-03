@@ -1,0 +1,10 @@
+{
+  "name": "loveable-cloud-ide",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Loveable Full-Stack Autonomous AI Web Application Platform",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "dev": "cd frontend && npm run dev"
+  }
+}
