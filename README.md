@@ -18,15 +18,23 @@ Account creation portal with instant session creation and JWT token issuance.
 Central user dashboard for managing projects, creating new projects, and launching workspace runtimes.
 ![Loveable Projects Dashboard Route UI](docs/images/projects_ui.png)
 
-#### 💻 4. Cloud IDE Workspace Route (`/projects/:projectId`)
-Full-featured browser workspace with Monaco Editor, tree view explorer, streaming AI chat panel, and hot-reloading web preview iframe.
-![Loveable Workspace Cloud IDE UI](docs/images/workspace_ui.jpg)
+#### ➕ 4. Create New Project Modal
+Modal dialog to initialize a new workspace environment and scaffold the starter boilerplate.
+![Loveable Create New Project Modal UI](docs/images/create_project_modal.png)
 
-#### ⚡ 5. Working Live Application Preview
-Real-time hot-reloading iframe rendering generated web application components live inside the workspace (`http://localhost:3002`).
-![Loveable Working Live Application Preview UI](docs/images/preview_ui.jpg)
+#### 💻 5. Cloud IDE Workspace Route (`/projects/:projectId`)
+Full-featured browser workspace with Monaco Editor, tree view file explorer with custom icons, streaming AI chat panel, and hot-reloading web preview toggle.
+![Loveable Workspace Cloud IDE UI](docs/images/workspace_ui.png)
 
-#### 🏗️ 6. Microservice Architecture & Infrastructure Diagram
+#### ⚡ 6. Working Live Application Preview (Integrated Mode)
+Real-time hot-reloading iframe rendering generated web application components live inside the workspace with active AI assistance.
+![Loveable Working Live Application Preview UI](docs/images/preview_ui.png)
+
+#### 🌐 7. Standalone Application Output (`http://localhost:3002`)
+Direct view of the running Next.js application served by Turbopack.
+![Loveable Standalone Next.js Application UI](docs/images/live_preview_screen.png)
+
+#### 🏗️ 8. Microservice Architecture & Infrastructure Diagram
 Enterprise microservice topology diagram showing Frontend, Auth Service, Project Service, AI Service, File Server, AWS S3 Sync, MongoDB, Redis, RabbitMQ, and EKS Ingress.
 ![Loveable Microservice Architecture Diagram](docs/images/architecture_diagram.jpg)
 

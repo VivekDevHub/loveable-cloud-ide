@@ -107,31 +107,35 @@ async function reap(uniqueId: string) {
  * Call once during startup, before the HTTP server begins accepting traffic.
  */
 export async function startIdleReaper() {
-    const db = redis.options.db ?? 0
-    const expiredChannel = `__keyevent@${db}__:expired`
-
     try {
-        // Redis does not emit expiry events unless keyspace notifications are enabled.
-        const [, current] = await redis.config("GET", "notify-keyspace-events") as [string, string]
-        if (!current.includes("E") || !current.includes("x")) {
-            await redis.config("SET", "notify-keyspace-events", `${current}Ex`)
+        const db = redis.options.db ?? 0
+        const expiredChannel = `__keyevent@${db}__:expired`
+
+        try {
+            // Redis does not emit expiry events unless keyspace notifications are enabled.
+            const [, current] = await redis.config("GET", "notify-keyspace-events") as [string, string]
+            if (!current.includes("E") || !current.includes("x")) {
+                await redis.config("SET", "notify-keyspace-events", `${current}Ex`)
+            }
+        } catch (error) {
+            console.warn("[idle-reaper] could not enable keyspace notifications, enable 'Ex' on the server:", error)
         }
-    } catch (error) {
-        console.warn("[idle-reaper] could not enable keyspace notifications, enable 'Ex' on the server:", error)
+
+        await redisSubscriber.subscribe(expiredChannel, REAPED_CHANNEL)
+
+        redisSubscriber.on("message", (channel, message) => {
+            if (channel === expiredChannel && message.startsWith(ACTIVITY_KEY_PREFIX)) {
+                void reap(message.slice(ACTIVITY_KEY_PREFIX.length))
+                return
+            }
+
+            if (channel === REAPED_CHANNEL) {
+                reapedHandlers.forEach((handler) => handler(message))
+            }
+        })
+
+        console.log(`[idle-reaper] listening on ${expiredChannel} (idle ttl ${IDLE_TTL_MS}ms)`)
+    } catch (err: any) {
+        console.warn("[idle-reaper] Redis not available, idle reaper offline:", err?.message || err)
     }
-
-    await redisSubscriber.subscribe(expiredChannel, REAPED_CHANNEL)
-
-    redisSubscriber.on("message", (channel, message) => {
-        if (channel === expiredChannel && message.startsWith(ACTIVITY_KEY_PREFIX)) {
-            void reap(message.slice(ACTIVITY_KEY_PREFIX.length))
-            return
-        }
-
-        if (channel === REAPED_CHANNEL) {
-            reapedHandlers.forEach((handler) => handler(message))
-        }
-    })
-
-    console.log(`[idle-reaper] listening on ${expiredChannel} (idle ttl ${IDLE_TTL_MS}ms)`)
 }

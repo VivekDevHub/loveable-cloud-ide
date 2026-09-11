@@ -13,10 +13,10 @@ async function requireProject(userId: string, projectId: unknown) {
         throw new AppError(400, "projectId is required");
     }
 
-    const project = await ProjectModel.findOne({ projectId, userId }).catch(() => null);
+    let project = await ProjectModel.findOne({ projectId, userId }).catch(() => null);
 
     if (!project) {
-        throw new AppError(404, "Project not found");
+        project = await ProjectModel.create({ projectId, userId, context: "" });
     }
 
     return project;

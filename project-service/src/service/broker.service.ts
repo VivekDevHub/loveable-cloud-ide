@@ -5,17 +5,19 @@ let channel: amqplib.Channel | null = null;
 
 
 export async function connectToMessageBroker() {
-
-    const connection = await amqplib.connect(env.MESSAGE_BROKER_URL);
-
-    channel = await connection.createChannel();
-
-    console.log('Connected to message broker');
+    try {
+        const connection = await amqplib.connect(env.MESSAGE_BROKER_URL);
+        channel = await connection.createChannel();
+        console.log('Connected to message broker');
+    } catch (err: any) {
+        console.warn('[broker] message broker offline (local fallback):', err?.message || err);
+    }
 }
 
 export async function publishMessage(queue: string, message: string) {
     if (!channel) {
-        throw new Error('Message broker channel is not initialized');
+        console.warn('[broker] message broker channel is not initialized, skipping publish');
+        return;
     }
 
     /**

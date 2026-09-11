@@ -6,12 +6,13 @@ let channel: amqplib.Channel | null = null;
 
 
 export async function connectToMessageBroker() {
-
-    const connection = await amqplib.connect(env.MESSAGE_BROKER_URL);
-
-    channel = await connection.createChannel();
-
-    console.log('Connected to message broker');
+    try {
+        const connection = await amqplib.connect(env.MESSAGE_BROKER_URL);
+        channel = await connection.createChannel();
+        console.log('Connected to message broker');
+    } catch (err: any) {
+        console.warn('[ai-broker] message broker offline (local fallback):', err?.message || err);
+    }
 }
 
 export async function publishMessage(queue: string, message: string) {
@@ -50,6 +51,10 @@ export async function consumeMessage(queue: string, callback: (message: amqplib.
 
 
 export async function setupConsumers() {
+    if (!channel) {
+        console.warn('[ai-broker] skipping consumer setup (broker offline)');
+        return;
+    }
     consumeMessage('project_created', async (message) => {
         if (!message) return;
 
