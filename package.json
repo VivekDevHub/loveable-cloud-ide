@@ -4,7 +4,7 @@
   "private": true,
   "description": "Loveable Full-Stack Autonomous AI Web Application Platform",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
+    "build": "cd frontend && npm install && npm run build && cd .. && rm -rf dist && cp -r frontend/dist dist",
     "dev": "cd frontend && npm run dev"
   },
   "devDependencies": {
