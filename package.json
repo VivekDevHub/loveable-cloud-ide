@@ -8,6 +8,7 @@
     "dev": "cd frontend && npm run dev"
   },
   "devDependencies": {
-    "puppeteer-core": "^25.10.0"
+    "puppeteer-core": "^25.10.0",
+    "vercel": "^59.16.0"
   }
 }
